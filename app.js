@@ -6,7 +6,7 @@ let http = require("http").Server(app);
 
 const port = process.env.PORT || 3000;
 
-let io = require("soket.io");
+let io = require("socket.io")(http);
 
 app.use(express.static("public"));
 
@@ -17,17 +17,17 @@ http.listen(port, () => {
 io.on("connection", (socket) => {
   console.log("a user is connected");
 
-  socket.on("create a join", (room) => {
+  socket.on("create or join", (room) => {
     console.log("crea or join to room ", room);
-    const room = io.sockets.adapter.rooms[room] || { length: 0 };
-    const numClients = room.length;
+    const myRoom = io.sockets.adapter.rooms[room] || { length: 0 };
+    const numClients = myRoom.length;
     console.log(room, "has", numClients);
 
     if (numClients == 0) {
       socket.join(room);
       socket.emit("created", room);
     } else if (numClients == 1) {
-      socket.join(rom);
+      socket.join(room);
       socket.emit("joined", room);
     } else {
       socket.emit("full", room);
@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("offer", (event) => {
-    socket.broadcast.ro(event.room).emit("offer", event.sdp);
+    socket.broadcast.to(event.room).emit("offer", event.sdp);
   });
 
   socket.on("answer", (event) => {
