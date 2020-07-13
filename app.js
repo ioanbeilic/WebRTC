@@ -1,14 +1,25 @@
 const express = require("express");
+const fs = require("fs");
 
 const app = express();
 
-let http = require("http").Server(app);
+const options = {
+  key: fs.readFileSync("./security/cert.key"),
+  cert: fs.readFileSync("./security/cert.pem"),
+};
+
+// let http = require("http").Server(app);
+http = require("https").createServer(options, app);
 
 const port = process.env.PORT || 3000;
 
 let io = require("socket.io")(http);
 
 app.use(express.static("public"));
+
+app.get("/test", (req, res) => {
+  res.send("this is an secure server");
+});
 
 http.listen(port, () => {
   console.log("listening on", port);

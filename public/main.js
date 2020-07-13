@@ -22,6 +22,7 @@ const streamConstraints = {
 };
 
 const socket = io();
+const nativeGetUserMedia = navigator.mediaDevices.getUserMedia;
 
 btnConnectToId.onclick = () => {
   if (inputconnectionId.value == "") {
